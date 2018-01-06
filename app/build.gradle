@@ -18,6 +18,7 @@ repositories {
 
     mavenCentral()
 
+
     maven {
         url "http://dl.bintray.com/journeyapps/maven"
     }
@@ -27,7 +28,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
-        applicationId "com.kortfri.testfirebase"
+        applicationId "com.kortfri.kvtskoleREAL"
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 1

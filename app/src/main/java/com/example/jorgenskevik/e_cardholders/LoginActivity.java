@@ -105,8 +105,8 @@ public class LoginActivity extends AppCompatActivity  implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.firebaseauth);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
 
 
         if (savedInstanceState != null) {
@@ -116,24 +116,6 @@ public class LoginActivity extends AppCompatActivity  implements
         JodaTimeAndroid.init(this);
         sessionManager = new SessionManager(getApplicationContext());
         HashMap<String, String> user = sessionManager.getUserDetails();
-
-        // name
-        String name = user.get(SessionManager.KEY_NAME);
-
-        // id
-        String id = user.get(SessionManager.KEY_ID);
-
-        // email
-        String email = user.get(SessionManager.KEY_EMAIL);
-
-        //token
-        String token = user.get(SessionManager.KEY_TOKEN);
-
-        //check
-        String check = user.get(SessionManager.KEY_CHECK);
-
-        if(name == null || id == null || email == null || token == null ){
-
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
@@ -146,7 +128,7 @@ public class LoginActivity extends AppCompatActivity  implements
 
         mPhoneNumberField = (EditText) findViewById(R.id.field_phone_number);
         mVerificationField = (EditText) findViewById(R.id.field_verification_code);
-            landskode = (EditText) findViewById(R.id.landcode);
+        landskode = (EditText) findViewById(R.id.landcode);
 
         mStartButton = (Button) findViewById(R.id.button_start_verification);
         mVerifyButton = (Button) findViewById(R.id.button_verify_phone);
@@ -237,16 +219,6 @@ public class LoginActivity extends AppCompatActivity  implements
             }
         };
 
-    } else if(check == null) {
-        Intent intent = new Intent(LoginActivity.this, TermsActivity.class);
-        startActivity(intent);
-
-    }
-        else{
-        Intent intent = new Intent(LoginActivity.this, UserActivity.class);
-        startActivity(intent);
-    }
-        // [END phone_auth_callbacks]
     }
 
     // [START on_start_check_user]
@@ -320,15 +292,12 @@ public class LoginActivity extends AppCompatActivity  implements
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCredential:success");
-
                             FirebaseUser user = task.getResult().getUser();
                             // [START_EXCLUDE]
                             updateUI(STATE_SIGNIN_SUCCESS, user);
                             // [END_EXCLUDE]
                         } else {
                             // Sign in failed, display a message and update the UI
-                            Log.w(TAG, "signInWithCredential:failure", task.getException());
                             if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                                 // The verification code entered was invalid
                                 // [START_EXCLUDE silent]
@@ -373,15 +342,12 @@ public class LoginActivity extends AppCompatActivity  implements
     private void updateUI(int uiState, FirebaseUser user, PhoneAuthCredential cred) {
         switch (uiState) {
             case STATE_INITIALIZED:
-                System.out.println("1");
                 // Initialized state, show only the phone number field and start button
                 enableViews(mStartButton, mPhoneNumberField);
                 disableViews(mVerifyButton, mResendButton, mVerificationField);
                 mDetailText.setText(null);
                 break;
             case STATE_CODE_SENT:
-                System.out.println("2");
-
                 // Code sent state, show the verification field, the
                 enableViews(mVerifyButton, mResendButton, mPhoneNumberField, mVerificationField);
                 disableViews(mStartButton);
@@ -389,9 +355,6 @@ public class LoginActivity extends AppCompatActivity  implements
                 mDetailText.setTextColor(Color.parseColor("#43a047"));
                 break;
             case STATE_VERIFY_FAILED:
-                System.out.println(landskode);
-                System.out.println("3");
-
                 // Verification has failed, show all options
                 enableViews(mStartButton, mVerifyButton, mResendButton, mPhoneNumberField,
                         mVerificationField);
@@ -400,8 +363,6 @@ public class LoginActivity extends AppCompatActivity  implements
                 progressBar.setVisibility(View.INVISIBLE);
                 break;
             case STATE_VERIFY_SUCCESS:
-                System.out.println("4");
-
                 // Verification has succeeded, proceed to firebase sign in
                 disableViews(mStartButton, mVerifyButton, mResendButton, mPhoneNumberField,
                         mVerificationField);
@@ -411,15 +372,10 @@ public class LoginActivity extends AppCompatActivity  implements
 
                 // Set the verification text based on the credential
                 if (cred != null) {
-                    System.out.println("5");
 
                     if (cred.getSmsCode() != null) {
-                        System.out.println("6");
-
                         mVerificationField.setText(cred.getSmsCode());
                     } else {
-                        System.out.println("7");
-
                         mVerificationField.setText(R.string.instant_validation);
                         mVerificationField.setTextColor(Color.parseColor("#4bacb8"));
                     }
@@ -427,7 +383,6 @@ public class LoginActivity extends AppCompatActivity  implements
 
                 break;
             case STATE_SIGNIN_FAILED:
-                System.out.println("8");
 
                 // No-op, handled by sign-in check
                 mDetailText.setText(R.string.status_sign_in_failed);
@@ -435,7 +390,6 @@ public class LoginActivity extends AppCompatActivity  implements
                 progressBar.setVisibility(View.INVISIBLE);
                 break;
             case STATE_SIGNIN_SUCCESS:
-                System.out.println("9");
 
                 // Np-op, handled by sign-in check
                 mStatusText.setText(R.string.signed_in);
@@ -449,7 +403,6 @@ public class LoginActivity extends AppCompatActivity  implements
 
             mStatusText.setText(R.string.sign_out);;
         } else {
-            System.out.println("AUTORISERT!");
 
             // Signed in
             mPhoneNumberViews.setVisibility(View.GONE);
@@ -488,9 +441,7 @@ public class LoginActivity extends AppCompatActivity  implements
                                         .build();
 
                                 UserAPI userapi = retrofit.create(UserAPI.class);
-                                System.out.println("token: " + authHeader.get("firebase-token") + "key: " + authHeader.get("client_key") +
-                                        "phone: " + authHeader.get("phoneNumber")
-                                        + "Version: " + authHeader.get("Accept-Version"));
+
                                 userapi.userLogin(
                                         authHeader.get("phoneNumber"),
                                         authHeader.get("firebase-token"),
@@ -498,9 +449,7 @@ public class LoginActivity extends AppCompatActivity  implements
                                         authHeader.get("Accept-Version")).enqueue(new Callback<LoginModel>() {
                                     @Override
                                     public void onResponse(Call<LoginModel> call, Response<LoginModel> response) {
-                                        System.out.println("dette gikk jo helt knall");
                                         if (response.isSuccessful()) {
-                                            System.out.println("også her?");
                                             LoginModel LoginList = response.body();
 
                                             sessionManager = new SessionManager(getApplicationContext());
@@ -534,7 +483,6 @@ public class LoginActivity extends AppCompatActivity  implements
                                             sessionManager.createLoginSession(usernameString,emailString, tokenString, studentNumber, id, role, pictureToken, expirationString, birthDateString, picture);
 
                                             if (role.equals("admin")) {
-                                                System.out.println("gikk inn i admin");
                                                 Context context = getApplicationContext();
                                                 int duration = Toast.LENGTH_LONG;
                                                 Toast toast = Toast.makeText(context, R.string.youareadmin, duration);
@@ -542,7 +490,6 @@ public class LoginActivity extends AppCompatActivity  implements
 
 
                                             } else if (emailString.trim().equals("") || id.trim().equals("") || usernameString.trim().equals("") || role.trim().equals("") || pictureToken.trim().equals("")) {
-                                                System.out.println("noe mangler");
                                                 Context context = getApplicationContext();
                                                 int duration = Toast.LENGTH_SHORT;
                                                 Toast toast = Toast.makeText(context, R.string.contactIT, duration);
@@ -551,14 +498,11 @@ public class LoginActivity extends AppCompatActivity  implements
                                                 startActivity(intent);
 
                                             } else {
-                                                System.out.println("alt var konge");
                                                 Intent intent = new Intent(LoginActivity.this, TermsActivity.class);
                                                 startActivity(intent);
 
                                             }
                                         } else {
-                                            System.out.println("noe gikk feil");
-                                            System.out.println(call + " dette er call");
                                             Context context = getApplicationContext();
                                             CharSequence text = response.message();
                                             int duration = Toast.LENGTH_SHORT;
@@ -570,7 +514,6 @@ public class LoginActivity extends AppCompatActivity  implements
 
                                     @Override
                                     public void onFailure(Call<LoginModel> call, Throwable t) {
-                                        System.out.println("this was shit............................................");
                                         Context context = getApplicationContext();
                                         CharSequence text = t.getMessage();
                                         int duration = Toast.LENGTH_SHORT;
@@ -582,7 +525,6 @@ public class LoginActivity extends AppCompatActivity  implements
                                 // ...
                             } else {
                                 // Handle error -> task.getException();
-                                System.out.println("12456787223456765432");
                             }
                         }
                     });
